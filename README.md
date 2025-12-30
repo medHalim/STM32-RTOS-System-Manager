@@ -1,4 +1,4 @@
-# Embedded RTOS System Manager (STM32 / FreeRTOS)
+# Embedded RTOS System Manager
 
 This project (work in progress) implements a modular **real-time embedded system architecture** based on **STM32F4** and **FreeRTOS (CMSIS-RTOS v2)**.
 
