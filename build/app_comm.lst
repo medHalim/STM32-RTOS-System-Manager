@@ -1,0 +1,115 @@
+ARM GAS  /tmp/cca30LpP.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"app_comm.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/app_comm.c"
+  20              		.section	.text.CommTask,"ax",%progbits
+  21              		.align	1
+  22              		.global	CommTask
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	CommTask:
+  28              	.LFB134:
+   1:Core/Src/app_comm.c **** #include "app_comm.h"
+   2:Core/Src/app_comm.c **** #include "cmsis_os2.h"
+   3:Core/Src/app_comm.c **** #include "main.h"
+   4:Core/Src/app_comm.c **** 
+   5:Core/Src/app_comm.c **** const osThreadAttr_t CommTask_attributes = {
+   6:Core/Src/app_comm.c ****     .name = "CommTask",
+   7:Core/Src/app_comm.c ****     .priority = osPriorityAboveNormal,
+   8:Core/Src/app_comm.c ****     .stack_size = 256 * 4
+   9:Core/Src/app_comm.c **** };
+  10:Core/Src/app_comm.c **** 
+  11:Core/Src/app_comm.c **** void CommTask(void *argument)
+  12:Core/Src/app_comm.c **** {
+  29              		.loc 1 12 1 view -0
+  30              		.cfi_startproc
+  31              		@ Volatile: function does not return.
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              	.LVL0:
+  35              		.loc 1 12 1 is_stmt 0 view .LVU1
+  36 0000 08B5     		push	{r3, lr}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 8
+  39              		.cfi_offset 3, -8
+  40              		.cfi_offset 14, -4
+  41              	.LVL1:
+  42              	.L2:
+  13:Core/Src/app_comm.c ****     (void)argument;
+  43              		.loc 1 13 5 is_stmt 1 view .LVU2
+  14:Core/Src/app_comm.c **** 
+  15:Core/Src/app_comm.c ****     for (;;)
+ARM GAS  /tmp/cca30LpP.s 			page 2
+
+
+  44              		.loc 1 15 5 view .LVU3
+  16:Core/Src/app_comm.c ****     {
+  17:Core/Src/app_comm.c ****         // Wait for ISR or another task to signal communication event
+  18:Core/Src/app_comm.c ****         osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
+  45              		.loc 1 18 9 discriminator 1 view .LVU4
+  46 0002 4FF0FF32 		mov	r2, #-1
+  47 0006 0021     		movs	r1, #0
+  48 0008 0120     		movs	r0, #1
+  49 000a FFF7FEFF 		bl	osThreadFlagsWait
+  50              	.LVL2:
+  15:Core/Src/app_comm.c ****     {
+  51              		.loc 1 15 5 view .LVU5
+  52 000e F8E7     		b	.L2
+  53              		.cfi_endproc
+  54              	.LFE134:
+  56              		.global	CommTask_attributes
+  57              		.section	.rodata.str1.4,"aMS",%progbits,1
+  58              		.align	2
+  59              	.LC0:
+  60 0000 436F6D6D 		.ascii	"CommTask\000"
+  60      5461736B 
+  60      00
+  61              		.section	.rodata.CommTask_attributes,"a"
+  62              		.align	2
+  65              	CommTask_attributes:
+  66 0000 00000000 		.word	.LC0
+  67 0004 00000000 		.space	16
+  67      00000000 
+  67      00000000 
+  67      00000000 
+  68 0014 00040000 		.word	1024
+  69 0018 20000000 		.word	32
+  70 001c 00000000 		.space	8
+  70      00000000 
+  71              		.text
+  72              	.Letext0:
+  73              		.file 2 "/usr/lib/gcc/arm-none-eabi/13.2.1/include/stdint.h"
+  74              		.file 3 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+  75              		.file 4 "Core/Inc/app_comm.h"
+ARM GAS  /tmp/cca30LpP.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 app_comm.c
+     /tmp/cca30LpP.s:21     .text.CommTask:00000000 $t
+     /tmp/cca30LpP.s:27     .text.CommTask:00000000 CommTask
+     /tmp/cca30LpP.s:65     .rodata.CommTask_attributes:00000000 CommTask_attributes
+     /tmp/cca30LpP.s:58     .rodata.str1.4:00000000 $d
+     /tmp/cca30LpP.s:62     .rodata.CommTask_attributes:00000000 $d
+
+UNDEFINED SYMBOLS
+osThreadFlagsWait

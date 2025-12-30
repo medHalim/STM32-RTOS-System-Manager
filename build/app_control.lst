@@ -1,0 +1,189 @@
+ARM GAS  /tmp/cciBUAyr.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"app_control.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/app_control.c"
+  20              		.section	.text.ControlTask,"ax",%progbits
+  21              		.align	1
+  22              		.global	ControlTask
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	ControlTask:
+  28              	.LVL0:
+  29              	.LFB138:
+   1:Core/Src/app_control.c **** #include "app_control.h"
+   2:Core/Src/app_control.c **** #include "main.h"        // HAL handles & GPIO defines
+   3:Core/Src/app_control.c **** #include "cmsis_os2.h"
+   4:Core/Src/app_control.c **** #include "FreeRTOS.h"
+   5:Core/Src/app_control.c **** 
+   6:Core/Src/app_control.c **** /* ===== Control Task Definition ===== */
+   7:Core/Src/app_control.c **** 
+   8:Core/Src/app_control.c **** const osThreadAttr_t ControlTask_attributes = {
+   9:Core/Src/app_control.c ****     .name = "ControlTask",
+  10:Core/Src/app_control.c ****     .priority = (osPriority_t) osPriorityHigh,
+  11:Core/Src/app_control.c ****     .stack_size = 256 * 4
+  12:Core/Src/app_control.c **** };
+  13:Core/Src/app_control.c **** 
+  14:Core/Src/app_control.c **** void ControlTask(void *argument)
+  15:Core/Src/app_control.c **** {
+  30              		.loc 1 15 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 15 1 is_stmt 0 view .LVU1
+  35 0000 38B5     		push	{r3, r4, r5, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 16
+  38              		.cfi_offset 3, -16
+  39              		.cfi_offset 4, -12
+  40              		.cfi_offset 5, -8
+  41              		.cfi_offset 14, -4
+  16:Core/Src/app_control.c ****     (void)argument;
+  42              		.loc 1 16 5 is_stmt 1 view .LVU2
+ARM GAS  /tmp/cciBUAyr.s 			page 2
+
+
+  17:Core/Src/app_control.c **** 
+  18:Core/Src/app_control.c ****     uint32_t nextWake = osKernelGetTickCount();
+  43              		.loc 1 18 5 view .LVU3
+  44              		.loc 1 18 25 is_stmt 0 view .LVU4
+  45 0002 FFF7FEFF 		bl	osKernelGetTickCount
+  46              	.LVL1:
+  47              		.loc 1 18 25 view .LVU5
+  48 0006 0546     		mov	r5, r0
+  49              	.LVL2:
+  19:Core/Src/app_control.c ****     uint16_t ledCounter = 0;
+  50              		.loc 1 19 5 is_stmt 1 view .LVU6
+  51              		.loc 1 19 14 is_stmt 0 view .LVU7
+  52 0008 0024     		movs	r4, #0
+  53 000a 08E0     		b	.L3
+  54              	.LVL3:
+  55              	.L5:
+  20:Core/Src/app_control.c **** 
+  21:Core/Src/app_control.c ****     for (;;)
+  22:Core/Src/app_control.c ****     {
+  23:Core/Src/app_control.c ****         // ===== Real control logic =====
+  24:Core/Src/app_control.c ****         // TODO: read sensors / compute actuators
+  25:Core/Src/app_control.c **** 
+  26:Core/Src/app_control.c ****         // ===== LED for human visibility =====
+  27:Core/Src/app_control.c ****         ledCounter++;
+  28:Core/Src/app_control.c ****         if (ledCounter >= 50)  // 50 * 10 ms = 500 ms
+  29:Core/Src/app_control.c ****         {
+  30:Core/Src/app_control.c ****             HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+  56              		.loc 1 30 13 is_stmt 1 view .LVU8
+  57 000c 4021     		movs	r1, #64
+  58 000e 0648     		ldr	r0, .L6
+  59 0010 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  60              	.LVL4:
+  31:Core/Src/app_control.c ****             ledCounter = 0;
+  61              		.loc 1 31 13 view .LVU9
+  62              		.loc 1 31 24 is_stmt 0 view .LVU10
+  63 0014 0024     		movs	r4, #0
+  64              	.LVL5:
+  65              	.L2:
+  32:Core/Src/app_control.c ****         }
+  33:Core/Src/app_control.c **** 
+  34:Core/Src/app_control.c ****         // ===== Periodic wait (10 ms) =====
+  35:Core/Src/app_control.c ****         nextWake += 10;           // 10 ms period
+  66              		.loc 1 35 9 is_stmt 1 view .LVU11
+  67              		.loc 1 35 18 is_stmt 0 view .LVU12
+  68 0016 0A35     		adds	r5, r5, #10
+  69              	.LVL6:
+  36:Core/Src/app_control.c ****         osDelayUntil(nextWake);   // CMSIS-RTOS v2 API only
+  70              		.loc 1 36 9 is_stmt 1 view .LVU13
+  71 0018 2846     		mov	r0, r5
+  72 001a FFF7FEFF 		bl	osDelayUntil
+  73              	.LVL7:
+  21:Core/Src/app_control.c ****     {
+  74              		.loc 1 21 5 view .LVU14
+  75              	.L3:
+  21:Core/Src/app_control.c ****     {
+  76              		.loc 1 21 5 view .LVU15
+  27:Core/Src/app_control.c ****         if (ledCounter >= 50)  // 50 * 10 ms = 500 ms
+ARM GAS  /tmp/cciBUAyr.s 			page 3
+
+
+  77              		.loc 1 27 9 view .LVU16
+  27:Core/Src/app_control.c ****         if (ledCounter >= 50)  // 50 * 10 ms = 500 ms
+  78              		.loc 1 27 19 is_stmt 0 view .LVU17
+  79 001e 0134     		adds	r4, r4, #1
+  80              	.LVL8:
+  27:Core/Src/app_control.c ****         if (ledCounter >= 50)  // 50 * 10 ms = 500 ms
+  81              		.loc 1 27 19 view .LVU18
+  82 0020 A4B2     		uxth	r4, r4
+  83              	.LVL9:
+  28:Core/Src/app_control.c ****         {
+  84              		.loc 1 28 9 is_stmt 1 view .LVU19
+  28:Core/Src/app_control.c ****         {
+  85              		.loc 1 28 12 is_stmt 0 view .LVU20
+  86 0022 312C     		cmp	r4, #49
+  87 0024 F2D8     		bhi	.L5
+  28:Core/Src/app_control.c ****         {
+  88              		.loc 1 28 12 view .LVU21
+  89 0026 F6E7     		b	.L2
+  90              	.L7:
+  91              		.align	2
+  92              	.L6:
+  93 0028 00000240 		.word	1073872896
+  94              		.cfi_endproc
+  95              	.LFE138:
+  97              		.global	ControlTask_attributes
+  98              		.section	.rodata.str1.4,"aMS",%progbits,1
+  99              		.align	2
+ 100              	.LC0:
+ 101 0000 436F6E74 		.ascii	"ControlTask\000"
+ 101      726F6C54 
+ 101      61736B00 
+ 102              		.section	.rodata.ControlTask_attributes,"a"
+ 103              		.align	2
+ 106              	ControlTask_attributes:
+ 107 0000 00000000 		.word	.LC0
+ 108 0004 00000000 		.space	16
+ 108      00000000 
+ 108      00000000 
+ 108      00000000 
+ 109 0014 00040000 		.word	1024
+ 110 0018 28000000 		.word	40
+ 111 001c 00000000 		.space	8
+ 111      00000000 
+ 112              		.text
+ 113              	.Letext0:
+ 114              		.file 2 "/usr/lib/gcc/arm-none-eabi/13.2.1/include/stdint.h"
+ 115              		.file 3 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 116              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 117              		.file 5 "Core/Inc/app_control.h"
+ 118              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  /tmp/cciBUAyr.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 app_control.c
+     /tmp/cciBUAyr.s:21     .text.ControlTask:00000000 $t
+     /tmp/cciBUAyr.s:27     .text.ControlTask:00000000 ControlTask
+     /tmp/cciBUAyr.s:93     .text.ControlTask:00000028 $d
+     /tmp/cciBUAyr.s:106    .rodata.ControlTask_attributes:00000000 ControlTask_attributes
+     /tmp/cciBUAyr.s:99     .rodata.str1.4:00000000 $d
+     /tmp/cciBUAyr.s:103    .rodata.ControlTask_attributes:00000000 $d
+
+UNDEFINED SYMBOLS
+osKernelGetTickCount
+HAL_GPIO_TogglePin
+osDelayUntil

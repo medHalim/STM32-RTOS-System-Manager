@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "name": "STM32F407-C",
+      "includePath": [
+        "${workspaceFolder}/Core/Inc",                               
+        "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",      
+        "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+        "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+        "${workspaceFolder}/Drivers/CMSIS/Include",
+        "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/include",
+        "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2",
+        "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"
+      ],
+      "defines": [
+        "STM32F407xx",    // MCU identifier
+        "USE_HAL_DRIVER"  // Tell code we are using HAL
+      ],
+      "compilerPath": "/usr/bin/arm-none-eabi-gcc",  
+      "intelliSenseMode": "gcc-arm",
+      "cStandard": "c11"
+    }
+  ],
+  "version": 4
+}

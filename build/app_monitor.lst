@@ -1,0 +1,186 @@
+ARM GAS  /tmp/ccIqpAq7.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"app_monitor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/app_monitor.c"
+  20              		.section	.text.MonitorTask,"ax",%progbits
+  21              		.align	1
+  22              		.global	MonitorTask
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	MonitorTask:
+  28              	.LVL0:
+  29              	.LFB134:
+   1:Core/Src/app_monitor.c **** #include "app_monitor.h"
+   2:Core/Src/app_monitor.c **** #include "main.h"
+   3:Core/Src/app_monitor.c **** #include "cmsis_os2.h"
+   4:Core/Src/app_monitor.c **** 
+   5:Core/Src/app_monitor.c **** const osThreadAttr_t MonitorTask_attributes = {
+   6:Core/Src/app_monitor.c ****     .name = "MonitorTask",
+   7:Core/Src/app_monitor.c ****     .priority = osPriorityNormal,
+   8:Core/Src/app_monitor.c ****     .stack_size = 256 * 4
+   9:Core/Src/app_monitor.c **** };
+  10:Core/Src/app_monitor.c **** 
+  11:Core/Src/app_monitor.c **** void MonitorTask(void *argument)
+  12:Core/Src/app_monitor.c **** {
+  30              		.loc 1 12 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 12 1 is_stmt 0 view .LVU1
+  35 0000 38B5     		push	{r3, r4, r5, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 16
+  38              		.cfi_offset 3, -16
+  39              		.cfi_offset 4, -12
+  40              		.cfi_offset 5, -8
+  41              		.cfi_offset 14, -4
+  13:Core/Src/app_monitor.c ****     (void)argument;
+  42              		.loc 1 13 5 is_stmt 1 view .LVU2
+  14:Core/Src/app_monitor.c **** 
+  15:Core/Src/app_monitor.c ****     uint32_t nextWake = osKernelGetTickCount();
+  43              		.loc 1 15 5 view .LVU3
+ARM GAS  /tmp/ccIqpAq7.s 			page 2
+
+
+  44              		.loc 1 15 25 is_stmt 0 view .LVU4
+  45 0002 FFF7FEFF 		bl	osKernelGetTickCount
+  46              	.LVL1:
+  47              		.loc 1 15 25 view .LVU5
+  48 0006 0546     		mov	r5, r0
+  49              	.LVL2:
+  16:Core/Src/app_monitor.c ****     uint8_t heartbeatCounter = 0;
+  50              		.loc 1 16 5 is_stmt 1 view .LVU6
+  51              		.loc 1 16 13 is_stmt 0 view .LVU7
+  52 0008 0024     		movs	r4, #0
+  53 000a 08E0     		b	.L3
+  54              	.LVL3:
+  55              	.L5:
+  17:Core/Src/app_monitor.c **** 
+  18:Core/Src/app_monitor.c ****     for (;;)
+  19:Core/Src/app_monitor.c ****     {
+  20:Core/Src/app_monitor.c ****         // ===== CPU load measurement / health check =====
+  21:Core/Src/app_monitor.c ****         // TODO: implement idle counter if desired
+  22:Core/Src/app_monitor.c **** 
+  23:Core/Src/app_monitor.c ****         // ===== Heartbeat LED =====
+  24:Core/Src/app_monitor.c ****         heartbeatCounter++;
+  25:Core/Src/app_monitor.c ****         if (heartbeatCounter >= 10)  // 10 * 100 ms = 1 s
+  26:Core/Src/app_monitor.c ****         {
+  27:Core/Src/app_monitor.c ****             HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+  56              		.loc 1 27 13 is_stmt 1 view .LVU8
+  57 000c 8021     		movs	r1, #128
+  58 000e 0648     		ldr	r0, .L6
+  59 0010 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+  60              	.LVL4:
+  28:Core/Src/app_monitor.c ****             heartbeatCounter = 0;
+  61              		.loc 1 28 13 view .LVU9
+  62              		.loc 1 28 30 is_stmt 0 view .LVU10
+  63 0014 0024     		movs	r4, #0
+  64              	.LVL5:
+  65              	.L2:
+  29:Core/Src/app_monitor.c ****         }
+  30:Core/Src/app_monitor.c **** 
+  31:Core/Src/app_monitor.c ****         // ===== Periodic wait (100 ms) =====
+  32:Core/Src/app_monitor.c ****         nextWake += 100;          // 100 ms period
+  66              		.loc 1 32 9 is_stmt 1 view .LVU11
+  67              		.loc 1 32 18 is_stmt 0 view .LVU12
+  68 0016 6435     		adds	r5, r5, #100
+  69              	.LVL6:
+  33:Core/Src/app_monitor.c ****         osDelayUntil(nextWake);   // CMSIS-RTOS v2 API only
+  70              		.loc 1 33 9 is_stmt 1 view .LVU13
+  71 0018 2846     		mov	r0, r5
+  72 001a FFF7FEFF 		bl	osDelayUntil
+  73              	.LVL7:
+  18:Core/Src/app_monitor.c ****     {
+  74              		.loc 1 18 5 view .LVU14
+  75              	.L3:
+  18:Core/Src/app_monitor.c ****     {
+  76              		.loc 1 18 5 view .LVU15
+  24:Core/Src/app_monitor.c ****         if (heartbeatCounter >= 10)  // 10 * 100 ms = 1 s
+  77              		.loc 1 24 9 view .LVU16
+  24:Core/Src/app_monitor.c ****         if (heartbeatCounter >= 10)  // 10 * 100 ms = 1 s
+  78              		.loc 1 24 25 is_stmt 0 view .LVU17
+ARM GAS  /tmp/ccIqpAq7.s 			page 3
+
+
+  79 001e 0134     		adds	r4, r4, #1
+  80              	.LVL8:
+  24:Core/Src/app_monitor.c ****         if (heartbeatCounter >= 10)  // 10 * 100 ms = 1 s
+  81              		.loc 1 24 25 view .LVU18
+  82 0020 E4B2     		uxtb	r4, r4
+  83              	.LVL9:
+  25:Core/Src/app_monitor.c ****         {
+  84              		.loc 1 25 9 is_stmt 1 view .LVU19
+  25:Core/Src/app_monitor.c ****         {
+  85              		.loc 1 25 12 is_stmt 0 view .LVU20
+  86 0022 092C     		cmp	r4, #9
+  87 0024 F2D8     		bhi	.L5
+  25:Core/Src/app_monitor.c ****         {
+  88              		.loc 1 25 12 view .LVU21
+  89 0026 F6E7     		b	.L2
+  90              	.L7:
+  91              		.align	2
+  92              	.L6:
+  93 0028 00000240 		.word	1073872896
+  94              		.cfi_endproc
+  95              	.LFE134:
+  97              		.global	MonitorTask_attributes
+  98              		.section	.rodata.str1.4,"aMS",%progbits,1
+  99              		.align	2
+ 100              	.LC0:
+ 101 0000 4D6F6E69 		.ascii	"MonitorTask\000"
+ 101      746F7254 
+ 101      61736B00 
+ 102              		.section	.rodata.MonitorTask_attributes,"a"
+ 103              		.align	2
+ 106              	MonitorTask_attributes:
+ 107 0000 00000000 		.word	.LC0
+ 108 0004 00000000 		.space	16
+ 108      00000000 
+ 108      00000000 
+ 108      00000000 
+ 109 0014 00040000 		.word	1024
+ 110 0018 18000000 		.word	24
+ 111 001c 00000000 		.space	8
+ 111      00000000 
+ 112              		.text
+ 113              	.Letext0:
+ 114              		.file 2 "/usr/lib/gcc/arm-none-eabi/13.2.1/include/stdint.h"
+ 115              		.file 3 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 116              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 117              		.file 5 "Core/Inc/app_monitor.h"
+ 118              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  /tmp/ccIqpAq7.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 app_monitor.c
+     /tmp/ccIqpAq7.s:21     .text.MonitorTask:00000000 $t
+     /tmp/ccIqpAq7.s:27     .text.MonitorTask:00000000 MonitorTask
+     /tmp/ccIqpAq7.s:93     .text.MonitorTask:00000028 $d
+     /tmp/ccIqpAq7.s:106    .rodata.MonitorTask_attributes:00000000 MonitorTask_attributes
+     /tmp/ccIqpAq7.s:99     .rodata.str1.4:00000000 $d
+     /tmp/ccIqpAq7.s:103    .rodata.MonitorTask_attributes:00000000 $d
+
+UNDEFINED SYMBOLS
+osKernelGetTickCount
+HAL_GPIO_TogglePin
+osDelayUntil

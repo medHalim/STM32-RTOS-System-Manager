@@ -1,0 +1,251 @@
+ARM GAS  /tmp/cckiL3Uz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"app_logging.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/app_logging.c"
+  20              		.section	.text.LoggingTask,"ax",%progbits
+  21              		.align	1
+  22              		.global	LoggingTask
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	LoggingTask:
+  28              	.LFB0:
+   1:Core/Src/app_logging.c **** #include "app_logging.h"
+   2:Core/Src/app_logging.c **** #include "cmsis_os2.h"
+   3:Core/Src/app_logging.c **** #include <string.h>
+   4:Core/Src/app_logging.c **** 
+   5:Core/Src/app_logging.c **** #define LOG_QUEUE_SIZE 16
+   6:Core/Src/app_logging.c **** 
+   7:Core/Src/app_logging.c **** const osThreadAttr_t LoggingTask_attributes = {
+   8:Core/Src/app_logging.c ****     .name = "LoggingTask",
+   9:Core/Src/app_logging.c ****     .priority = osPriorityLow,
+  10:Core/Src/app_logging.c ****     .stack_size = 256 * 4
+  11:Core/Src/app_logging.c **** };
+  12:Core/Src/app_logging.c **** 
+  13:Core/Src/app_logging.c **** /* Message queue handle */
+  14:Core/Src/app_logging.c **** osMessageQueueId_t logQueueHandle;
+  15:Core/Src/app_logging.c **** 
+  16:Core/Src/app_logging.c **** void LoggingTask(void *argument)
+  17:Core/Src/app_logging.c **** {
+  29              		.loc 1 17 1 view -0
+  30              		.cfi_startproc
+  31              		@ Volatile: function does not return.
+  32              		@ args = 0, pretend = 0, frame = 64
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              	.LVL0:
+  35              		.loc 1 17 1 is_stmt 0 view .LVU1
+  36 0000 00B5     		push	{lr}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 4
+  39              		.cfi_offset 14, -4
+  40 0002 91B0     		sub	sp, sp, #68
+  41              	.LCFI1:
+ARM GAS  /tmp/cckiL3Uz.s 			page 2
+
+
+  42              		.cfi_def_cfa_offset 72
+  43              	.LVL1:
+  44              	.L2:
+  18:Core/Src/app_logging.c ****     (void)argument;
+  45              		.loc 1 18 5 is_stmt 1 view .LVU2
+  19:Core/Src/app_logging.c ****     char msg[64];
+  46              		.loc 1 19 5 view .LVU3
+  20:Core/Src/app_logging.c **** 
+  21:Core/Src/app_logging.c ****     for (;;)
+  47              		.loc 1 21 5 view .LVU4
+  22:Core/Src/app_logging.c ****     {
+  23:Core/Src/app_logging.c ****         // Wait for message (best-effort)
+  24:Core/Src/app_logging.c ****         if (osMessageQueueGet(logQueueHandle, &msg, NULL, osWaitForever) == osOK)
+  48              		.loc 1 24 9 view .LVU5
+  49              		.loc 1 24 13 is_stmt 0 view .LVU6
+  50 0004 4FF0FF33 		mov	r3, #-1
+  51 0008 0022     		movs	r2, #0
+  52 000a 6946     		mov	r1, sp
+  53 000c 0248     		ldr	r0, .L4
+  54 000e 0068     		ldr	r0, [r0]
+  55 0010 FFF7FEFF 		bl	osMessageQueueGet
+  56              	.LVL2:
+  25:Core/Src/app_logging.c ****         {
+  26:Core/Src/app_logging.c ****             // ===== Logging action =====
+  27:Core/Src/app_logging.c ****             // e.g., send to UART, store in buffer
+  28:Core/Src/app_logging.c ****         }
+  57              		.loc 1 28 9 is_stmt 1 view .LVU7
+  21:Core/Src/app_logging.c ****     {
+  58              		.loc 1 21 5 view .LVU8
+  59 0014 F6E7     		b	.L2
+  60              	.L5:
+  61 0016 00BF     		.align	2
+  62              	.L4:
+  63 0018 00000000 		.word	logQueueHandle
+  64              		.cfi_endproc
+  65              	.LFE0:
+  67              		.section	.text.Logging_Send,"ax",%progbits
+  68              		.align	1
+  69              		.global	Logging_Send
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  74              	Logging_Send:
+  75              	.LVL3:
+  76              	.LFB1:
+  29:Core/Src/app_logging.c ****     }
+  30:Core/Src/app_logging.c **** }
+  31:Core/Src/app_logging.c **** 
+  32:Core/Src/app_logging.c **** /* API to push log */
+  33:Core/Src/app_logging.c **** void Logging_Send(const char *message)
+  34:Core/Src/app_logging.c **** {
+  77              		.loc 1 34 1 view -0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              		.loc 1 34 1 is_stmt 0 view .LVU10
+  82 0000 08B5     		push	{r3, lr}
+ARM GAS  /tmp/cckiL3Uz.s 			page 3
+
+
+  83              	.LCFI2:
+  84              		.cfi_def_cfa_offset 8
+  85              		.cfi_offset 3, -8
+  86              		.cfi_offset 14, -4
+  87 0002 0146     		mov	r1, r0
+  35:Core/Src/app_logging.c ****     if (logQueueHandle)
+  88              		.loc 1 35 5 is_stmt 1 view .LVU11
+  89              		.loc 1 35 9 is_stmt 0 view .LVU12
+  90 0004 034B     		ldr	r3, .L9
+  91 0006 1868     		ldr	r0, [r3]
+  92              	.LVL4:
+  93              		.loc 1 35 8 view .LVU13
+  94 0008 18B1     		cbz	r0, .L6
+  36:Core/Src/app_logging.c ****     {
+  37:Core/Src/app_logging.c ****         osMessageQueuePut(logQueueHandle, message, 0, 0); // best-effort
+  95              		.loc 1 37 9 is_stmt 1 view .LVU14
+  96 000a 0023     		movs	r3, #0
+  97 000c 1A46     		mov	r2, r3
+  98 000e FFF7FEFF 		bl	osMessageQueuePut
+  99              	.LVL5:
+ 100              	.L6:
+  38:Core/Src/app_logging.c ****     }
+  39:Core/Src/app_logging.c **** }
+ 101              		.loc 1 39 1 is_stmt 0 view .LVU15
+ 102 0012 08BD     		pop	{r3, pc}
+ 103              	.L10:
+ 104              		.align	2
+ 105              	.L9:
+ 106 0014 00000000 		.word	logQueueHandle
+ 107              		.cfi_endproc
+ 108              	.LFE1:
+ 110              		.section	.text.Logging_Init,"ax",%progbits
+ 111              		.align	1
+ 112              		.global	Logging_Init
+ 113              		.syntax unified
+ 114              		.thumb
+ 115              		.thumb_func
+ 117              	Logging_Init:
+ 118              	.LFB2:
+  40:Core/Src/app_logging.c **** 
+  41:Core/Src/app_logging.c **** /* Initialize log queue */
+  42:Core/Src/app_logging.c **** void Logging_Init(void)
+  43:Core/Src/app_logging.c **** {
+ 119              		.loc 1 43 1 is_stmt 1 view -0
+ 120              		.cfi_startproc
+ 121              		@ args = 0, pretend = 0, frame = 0
+ 122              		@ frame_needed = 0, uses_anonymous_args = 0
+ 123 0000 08B5     		push	{r3, lr}
+ 124              	.LCFI3:
+ 125              		.cfi_def_cfa_offset 8
+ 126              		.cfi_offset 3, -8
+ 127              		.cfi_offset 14, -4
+  44:Core/Src/app_logging.c ****     logQueueHandle = osMessageQueueNew(LOG_QUEUE_SIZE, sizeof(char[64]), NULL);
+ 128              		.loc 1 44 5 view .LVU17
+ 129              		.loc 1 44 22 is_stmt 0 view .LVU18
+ 130 0002 0022     		movs	r2, #0
+ 131 0004 4021     		movs	r1, #64
+ARM GAS  /tmp/cckiL3Uz.s 			page 4
+
+
+ 132 0006 1020     		movs	r0, #16
+ 133 0008 FFF7FEFF 		bl	osMessageQueueNew
+ 134              	.LVL6:
+ 135              		.loc 1 44 20 discriminator 1 view .LVU19
+ 136 000c 014B     		ldr	r3, .L13
+ 137 000e 1860     		str	r0, [r3]
+  45:Core/Src/app_logging.c **** }
+ 138              		.loc 1 45 1 view .LVU20
+ 139 0010 08BD     		pop	{r3, pc}
+ 140              	.L14:
+ 141 0012 00BF     		.align	2
+ 142              	.L13:
+ 143 0014 00000000 		.word	logQueueHandle
+ 144              		.cfi_endproc
+ 145              	.LFE2:
+ 147              		.global	logQueueHandle
+ 148              		.section	.bss.logQueueHandle,"aw",%nobits
+ 149              		.align	2
+ 152              	logQueueHandle:
+ 153 0000 00000000 		.space	4
+ 154              		.global	LoggingTask_attributes
+ 155              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 156              		.align	2
+ 157              	.LC0:
+ 158 0000 4C6F6767 		.ascii	"LoggingTask\000"
+ 158      696E6754 
+ 158      61736B00 
+ 159              		.section	.rodata.LoggingTask_attributes,"a"
+ 160              		.align	2
+ 163              	LoggingTask_attributes:
+ 164 0000 00000000 		.word	.LC0
+ 165 0004 00000000 		.space	16
+ 165      00000000 
+ 165      00000000 
+ 165      00000000 
+ 166 0014 00040000 		.word	1024
+ 167 0018 08000000 		.word	8
+ 168 001c 00000000 		.space	8
+ 168      00000000 
+ 169              		.text
+ 170              	.Letext0:
+ 171              		.file 2 "/usr/lib/gcc/arm-none-eabi/13.2.1/include/stdint.h"
+ 172              		.file 3 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 173              		.file 4 "Core/Inc/app_logging.h"
+ARM GAS  /tmp/cckiL3Uz.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 app_logging.c
+     /tmp/cckiL3Uz.s:21     .text.LoggingTask:00000000 $t
+     /tmp/cckiL3Uz.s:27     .text.LoggingTask:00000000 LoggingTask
+     /tmp/cckiL3Uz.s:63     .text.LoggingTask:00000018 $d
+     /tmp/cckiL3Uz.s:152    .bss.logQueueHandle:00000000 logQueueHandle
+     /tmp/cckiL3Uz.s:68     .text.Logging_Send:00000000 $t
+     /tmp/cckiL3Uz.s:74     .text.Logging_Send:00000000 Logging_Send
+     /tmp/cckiL3Uz.s:106    .text.Logging_Send:00000014 $d
+     /tmp/cckiL3Uz.s:111    .text.Logging_Init:00000000 $t
+     /tmp/cckiL3Uz.s:117    .text.Logging_Init:00000000 Logging_Init
+     /tmp/cckiL3Uz.s:143    .text.Logging_Init:00000014 $d
+     /tmp/cckiL3Uz.s:149    .bss.logQueueHandle:00000000 $d
+     /tmp/cckiL3Uz.s:163    .rodata.LoggingTask_attributes:00000000 LoggingTask_attributes
+     /tmp/cckiL3Uz.s:156    .rodata.str1.4:00000000 $d
+     /tmp/cckiL3Uz.s:160    .rodata.LoggingTask_attributes:00000000 $d
+
+UNDEFINED SYMBOLS
+osMessageQueueGet
+osMessageQueuePut
+osMessageQueueNew

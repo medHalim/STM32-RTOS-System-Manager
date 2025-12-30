@@ -1,0 +1,163 @@
+ARM GAS  /tmp/ccT2xgWl.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"app_rtos.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/app_rtos.c"
+  20              		.section	.text.App_RTOS_Init,"ax",%progbits
+  21              		.align	1
+  22              		.global	App_RTOS_Init
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	App_RTOS_Init:
+  28              	.LFB0:
+   1:Core/Src/app_rtos.c **** #include "app_rtos.h"
+   2:Core/Src/app_rtos.c **** #include "cmsis_os2.h"
+   3:Core/Src/app_rtos.c **** #include "app_control.h"
+   4:Core/Src/app_rtos.c **** #include "app_monitor.h"
+   5:Core/Src/app_rtos.c **** #include "app_fault.h"
+   6:Core/Src/app_rtos.c **** #include "app_logging.h"
+   7:Core/Src/app_rtos.c **** #include "app_comm.h"
+   8:Core/Src/app_rtos.c **** 
+   9:Core/Src/app_rtos.c **** /**
+  10:Core/Src/app_rtos.c ****   * @brief  Initialize and create all RTOS tasks and objects
+  11:Core/Src/app_rtos.c ****   * 
+  12:Core/Src/app_rtos.c ****   * | Task              | Type     | Trigger                               |
+  13:Core/Src/app_rtos.c ****   * | ----------------- | -------- | ------------------------------------- |
+  14:Core/Src/app_rtos.c ****   * | Control_Task      | Periodic | osDelayUntil                          |
+  15:Core/Src/app_rtos.c ****   * | Monitor_Task      | Periodic | osDelayUntil                          |
+  16:Core/Src/app_rtos.c ****   * | FaultManager_Task | Event    | osThreadFlagsWait                     |
+  17:Core/Src/app_rtos.c ****   * | Comm_Task         | Event    | osThreadFlagsWait (ISR-triggered)     |
+  18:Core/Src/app_rtos.c ****   * | Logging_Task      | Event    | osMessageQueueGet / put (best-effort) |
+  19:Core/Src/app_rtos.c **** 
+  20:Core/Src/app_rtos.c ****   * @param  None
+  21:Core/Src/app_rtos.c ****   * @retval None
+  22:Core/Src/app_rtos.c ****   */
+  23:Core/Src/app_rtos.c **** 
+  24:Core/Src/app_rtos.c **** void App_RTOS_Init(void)
+  25:Core/Src/app_rtos.c **** {
+  29              		.loc 1 25 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+ARM GAS  /tmp/ccT2xgWl.s 			page 2
+
+
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 3, -8
+  37              		.cfi_offset 14, -4
+  26:Core/Src/app_rtos.c ****     // Initialize queues first
+  27:Core/Src/app_rtos.c ****     Logging_Init();
+  38              		.loc 1 27 5 view .LVU1
+  39 0002 FFF7FEFF 		bl	Logging_Init
+  40              	.LVL0:
+  28:Core/Src/app_rtos.c **** 
+  29:Core/Src/app_rtos.c ****     /* Create Control Task */
+  30:Core/Src/app_rtos.c ****     osThreadNew(ControlTask, NULL, &ControlTask_attributes);
+  41              		.loc 1 30 5 view .LVU2
+  42 0006 0D4A     		ldr	r2, .L3
+  43 0008 0021     		movs	r1, #0
+  44 000a 0D48     		ldr	r0, .L3+4
+  45 000c FFF7FEFF 		bl	osThreadNew
+  46              	.LVL1:
+  31:Core/Src/app_rtos.c ****     osThreadNew(MonitorTask, NULL, &MonitorTask_attributes);
+  47              		.loc 1 31 5 view .LVU3
+  48 0010 0C4A     		ldr	r2, .L3+8
+  49 0012 0021     		movs	r1, #0
+  50 0014 0C48     		ldr	r0, .L3+12
+  51 0016 FFF7FEFF 		bl	osThreadNew
+  52              	.LVL2:
+  32:Core/Src/app_rtos.c ****     osThreadNew(FaultManagerTask, NULL, &FaultTask_attributes);
+  53              		.loc 1 32 5 view .LVU4
+  54 001a 0C4A     		ldr	r2, .L3+16
+  55 001c 0021     		movs	r1, #0
+  56 001e 0C48     		ldr	r0, .L3+20
+  57 0020 FFF7FEFF 		bl	osThreadNew
+  58              	.LVL3:
+  33:Core/Src/app_rtos.c ****     osThreadNew(LoggingTask, NULL, &LoggingTask_attributes);
+  59              		.loc 1 33 5 view .LVU5
+  60 0024 0B4A     		ldr	r2, .L3+24
+  61 0026 0021     		movs	r1, #0
+  62 0028 0B48     		ldr	r0, .L3+28
+  63 002a FFF7FEFF 		bl	osThreadNew
+  64              	.LVL4:
+  34:Core/Src/app_rtos.c ****     osThreadNew(CommTask, NULL, &CommTask_attributes);
+  65              		.loc 1 34 5 view .LVU6
+  66 002e 0B4A     		ldr	r2, .L3+32
+  67 0030 0021     		movs	r1, #0
+  68 0032 0B48     		ldr	r0, .L3+36
+  69 0034 FFF7FEFF 		bl	osThreadNew
+  70              	.LVL5:
+  35:Core/Src/app_rtos.c **** 
+  36:Core/Src/app_rtos.c ****     // Additional RTOS objects (semaphores, queues, etc.) can be created here
+  37:Core/Src/app_rtos.c **** }
+  71              		.loc 1 37 1 is_stmt 0 view .LVU7
+  72 0038 08BD     		pop	{r3, pc}
+  73              	.L4:
+  74 003a 00BF     		.align	2
+  75              	.L3:
+  76 003c 00000000 		.word	ControlTask_attributes
+  77 0040 00000000 		.word	ControlTask
+  78 0044 00000000 		.word	MonitorTask_attributes
+ARM GAS  /tmp/ccT2xgWl.s 			page 3
+
+
+  79 0048 00000000 		.word	MonitorTask
+  80 004c 00000000 		.word	FaultTask_attributes
+  81 0050 00000000 		.word	FaultManagerTask
+  82 0054 00000000 		.word	LoggingTask_attributes
+  83 0058 00000000 		.word	LoggingTask
+  84 005c 00000000 		.word	CommTask_attributes
+  85 0060 00000000 		.word	CommTask
+  86              		.cfi_endproc
+  87              	.LFE0:
+  89              		.text
+  90              	.Letext0:
+  91              		.file 2 "/usr/lib/gcc/arm-none-eabi/13.2.1/include/stdint.h"
+  92              		.file 3 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+  93              		.file 4 "Core/Inc/app_control.h"
+  94              		.file 5 "Core/Inc/app_monitor.h"
+  95              		.file 6 "Core/Inc/app_fault.h"
+  96              		.file 7 "Core/Inc/app_logging.h"
+  97              		.file 8 "Core/Inc/app_comm.h"
+ARM GAS  /tmp/ccT2xgWl.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 app_rtos.c
+     /tmp/ccT2xgWl.s:21     .text.App_RTOS_Init:00000000 $t
+     /tmp/ccT2xgWl.s:27     .text.App_RTOS_Init:00000000 App_RTOS_Init
+     /tmp/ccT2xgWl.s:76     .text.App_RTOS_Init:0000003c $d
+
+UNDEFINED SYMBOLS
+Logging_Init
+osThreadNew
+ControlTask_attributes
+ControlTask
+MonitorTask_attributes
+MonitorTask
+FaultTask_attributes
+FaultManagerTask
+LoggingTask_attributes
+LoggingTask
+CommTask_attributes
+CommTask
